@@ -1,6 +1,7 @@
 // noinspection ES6UnusedImports
 import STYLE from "./style.css"
 import perfNow from "performance-now"
+import queryString from "query-string"
 
 import vertexShaderSource from "./rm-07.vert"
 import fragmentShaderSource from "./rm-07.frag"
@@ -23,6 +24,8 @@ let canvas, gl, vao, program;
 // uniform: current time
 let u_time;
 
+let u_symmetry;
+
 let u_resolution;
 
 let u_mouse;
@@ -40,8 +43,8 @@ let envTexture;
 
 function resize()
 {
-    const width = (window.innerWidth/2) & ~15;
-    const height = (window.innerHeight/2) | 0;
+    const width = (window.innerWidth) & ~15;
+    const height = (window.innerHeight) | 0;
 
     config.width = width;
     config.height = height;
@@ -51,9 +54,6 @@ function resize()
 
     mouseX = width/2;
     mouseY = height/2;
-
-    canvas.style.width = window.innerWidth + "px";
-    canvas.style.height = window.innerHeight + "px";
 
     gl.viewport(0, 0, canvas.width, canvas.height);
 }
@@ -92,6 +92,7 @@ function printError(msg)
 {
     document.getElementById("out").innerHTML = "<p>" + msg + "</p>";
 }
+
 
 function main(time)
 {
@@ -179,19 +180,18 @@ window.onload = () => {
     //gl.enable(gl.TEXTURE_2D);
     envTexture = gl.createTexture();
 
-    const envImage = document.getElementById("env");
-
-    console.log({envImage});
-
-    gl.bindTexture(gl.TEXTURE_2D, envTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4096, 2048, 0, gl.RGBA, gl.UNSIGNED_BYTE, envImage);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-    gl.generateMipmap(gl.TEXTURE_2D);
-    gl.bindTexture(gl.TEXTURE_2D, null);
+    // const envImage = document.getElementById("env");
+    //
+    // gl.bindTexture(gl.TEXTURE_2D, envTexture);
+    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4096, 2048, 0, gl.RGBA, gl.UNSIGNED_BYTE, envImage);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+    // gl.generateMipmap(gl.TEXTURE_2D);
+    // gl.bindTexture(gl.TEXTURE_2D, null);
 
 
     u_time = gl.getUniformLocation(program, "u_time");
+    u_symmetry = gl.getUniformLocation(program, "u_symmetry");
     u_resolution = gl.getUniformLocation(program, "u_resolution");
     u_mouse = gl.getUniformLocation(program, "u_mouse");
     u_palette = gl.getUniformLocation(program, "u_palette");
@@ -199,6 +199,13 @@ window.onload = () => {
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
+
+    const params = queryString.parse(location.search)
+
+    const sym = +(params.sym || "5");
+    console.log("SYM = " + sym);
+
+    gl.uniform1f(u_symmetry, sym)
 
     // Bind the attribute/buffer set we want.
     gl.bindVertexArray(vao);
@@ -217,14 +224,16 @@ window.onload = () => {
 
     const paletteArray = Color.from(
         [
-            "#010101",
-            "#fff",
-            "#fff",
-            "#014d9d",
-            "#666666",
-            "#fff",
-            "#f0f",
-            "#0f0"
+            "#ff356c",
+            "#b9479e",
+            "#735cd2",
+            "#356cff",
+            "#778abd",
+            "#c0ab74",
+            "#ffc835",
+            "#ff9b46",
+            "#ff6b58",
+            "#ff356c"
         ],
         1
     );
@@ -232,9 +241,9 @@ window.onload = () => {
 
     gl.uniform3fv(u_palette, paletteArray);
 
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, envTexture);
-    gl.uniform1i(u_env, 0);
+    // gl.activeTexture(gl.TEXTURE0);
+    // gl.bindTexture(gl.TEXTURE_2D, envTexture);
+    // gl.uniform1i(u_env, 0);
 
     requestAnimationFrame(main)
 }

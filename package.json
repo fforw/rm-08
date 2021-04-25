@@ -9,6 +9,7 @@
         "domready": "^1.0.8",
         "glsl-specular-beckmann": "^1.1.2",
         "performance-now": "^2.1.0",
+        "query-string": "^7.0.0",
         "react": "^17.0.1",
         "react-dom": "^17.0.1",
         "simplex-noise": "^2.4.0"
@@ -41,7 +42,6 @@
         "webpack-cli": "^4.5.0"
     },
     "scripts": {
-        "build": "node tooling/clean.js ; cross-env NODE_ENV=production webpack -p",
         "build": "node tooling/clean.js ; webpack --mode=production",
         "build-dev": "node tooling/clean.js ; cross-env NODE_ENV=development webpack --mode=development",
         "watch": "node tooling/clean.js ; webpack --mode=development -w",

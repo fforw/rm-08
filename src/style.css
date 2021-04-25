@@ -14,16 +14,24 @@ body
     top:0;
 }
 
-
-.github
+.links
 {
     position: absolute;
     bottom: 0;
     right: 0;
-    background: #000;
-    color: #fff;
     font-family: monospace;
     font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.links a{
+    color: #fff;
+}
+
+.github
+{
+    background: #000;
+    color: #fff;
 }
 
 .hidden
