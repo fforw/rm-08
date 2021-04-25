@@ -102,7 +102,7 @@ void main(void)
     float id2 =  floor(result / 4.0);
 
     outColor = vec4(
-        floor(mod(result, 4.0)) >= 1.0 ? getPaletteColor(id2 + 1.0) : vec3(0),
+        (floor(mod(result, 4.0)) >= 1.0 ? getPaletteColor(id2 + 1.0) : vec3(0)) * min(1.0, 1.4 - (d*0.35/size)),
         1.0
     );
 
