@@ -1,0 +1,63 @@
+body
+{
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background-color: #444;
+    color: #ccc;
+}
+
+#screen
+{
+    position: absolute;
+    left:0;
+    top:0;
+}
+
+.links
+{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.links a{
+    color: #fff;
+}
+
+.github
+{
+    background: #000;
+    color: #fff;
+}
+
+.hidden
+{
+    position: absolute;
+    left: -10000px;
+    top: 0;
+}
+
+
+#lorem
+{
+    position: absolute;
+    width: 100%;
+    top:0;
+    left:0;
+    z-index: -1;
+    display: flex;
+    flex-flow: column wrap;
+}
+
+#lorem p
+{
+    max-width: 60ex;
+    align-self: center;
+}
+
+
+/*# sourceMappingURL=bundle-main-0856f22c98864a9222d9.css.map*/
