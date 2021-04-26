@@ -1,5 +1,5 @@
-# Raymarching Experiment #7
+# Raymarching Experiment #8
 
 WIP
 
-[Live demo](https://fforw.github.io/rm-07/)
+[Live demo](https://fforw.github.io/rm-08/)

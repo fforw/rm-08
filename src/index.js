@@ -3,8 +3,8 @@ import STYLE from "./style.css"
 import perfNow from "performance-now"
 import queryString from "query-string"
 
-import vertexShaderSource from "./rm-07.vert"
-import fragmentShaderSource from "./rm-07.frag"
+import vertexShaderSource from "./rm-08.vert"
+import fragmentShaderSource from "./rm-08.frag"
 import Color from "./Color";
 
 //console.log(fragmentShaderSource)
