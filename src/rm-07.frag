@@ -85,12 +85,9 @@ void main(void)
 
     float t0  = u_time *  1.03 * 0.5;
     float t1  = u_time * -1.11 * 0.5;
-    float t11 = u_time *  1.07 * 0.5;
     float t2  = u_time * -1.05 * 0.5;
 
-
     float result = sdCircle(p - vec2(200.0 + sin(t0) * 200.0, 200.0 + cos(t0) * 200.0), 100.0);
-
 
     result = min(result, sdSegment(p, vec2(300.0 + cos(t1) * 150.0, 300.0 + sin(t1) * 150.0), vec2(300.0 - cos(t1) * 150.0, 300.0 - sin(t1) * 150.0)));
     result = min(result, sdBox(p - vec2(100.0 + cos(t2) * 300.0, 500.0 + sin(t2) * 300.0), vec2(80.0,60.0)));
