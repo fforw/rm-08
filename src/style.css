@@ -3,6 +3,14 @@ body
     overflow: hidden;
     margin: 0;
     padding: 0;
+
+    background-color: #444;
+    color: #ccc;
+}
+
+#control
+{
+    padding: 4px;
     background-color: #444;
     color: #ccc;
 }

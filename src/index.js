@@ -32,7 +32,10 @@ let u_mouse;
 
 let u_palette;
 
+let u_shiny;
+
 let u_env;
+let u_env_ref;
 
 let mouseX = 0, mouseY = 0, mouseDown, startX, startY;
 
@@ -40,6 +43,9 @@ let mouseX = 0, mouseY = 0, mouseDown, startX, startY;
 let canvasBounds;
 
 let envTexture;
+let envTextureRef;
+
+let sym = +(queryString.parse(location.search).sym || "7");
 
 function resize()
 {
@@ -100,6 +106,7 @@ function main(time)
 
     // update uniforms
     gl.uniform1f(u_time, perfNow() / 1000.0);
+    gl.uniform1f(u_symmetry, sym);
     gl.uniform2f(u_resolution, config.width, config.height);
     gl.uniform4f(u_mouse, mouseX, config.height - mouseY, startX * f, (config.height - startY) * f);
 
@@ -175,19 +182,33 @@ window.onload = () => {
     resize();
 
     // Tell WebGL how to convert from clip space to pixels
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     //gl.enable(gl.TEXTURE_2D);
     envTexture = gl.createTexture();
 
-    // const envImage = document.getElementById("env");
-    //
-    // gl.bindTexture(gl.TEXTURE_2D, envTexture);
-    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 4096, 2048, 0, gl.RGBA, gl.UNSIGNED_BYTE, envImage);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-    // gl.generateMipmap(gl.TEXTURE_2D);
-    // gl.bindTexture(gl.TEXTURE_2D, null);
+    const envImage = document.getElementById("env");
+
+    gl.bindTexture(gl.TEXTURE_2D, envTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2048, 1024, 0, gl.RGBA, gl.UNSIGNED_BYTE, envImage);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    const envImageRef = document.getElementById("env-ref");
+
+    envTextureRef = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, envTextureRef);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 2048, 1024, 0, gl.RGBA, gl.UNSIGNED_BYTE, envImageRef);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    gl.bindTexture(gl.TEXTURE_2D, null);
 
 
     u_time = gl.getUniformLocation(program, "u_time");
@@ -195,17 +216,13 @@ window.onload = () => {
     u_resolution = gl.getUniformLocation(program, "u_resolution");
     u_mouse = gl.getUniformLocation(program, "u_mouse");
     u_palette = gl.getUniformLocation(program, "u_palette");
+    u_shiny = gl.getUniformLocation(program, "u_shiny");
     u_env = gl.getUniformLocation(program, "u_env");
+    u_env_ref = gl.getUniformLocation(program, "u_env_ref");
 
     // Tell it to use our program (pair of shaders)
     gl.useProgram(program);
 
-    const params = queryString.parse(location.search)
-
-    const sym = +(params.sym || "5");
-    console.log("SYM = " + sym);
-
-    gl.uniform1f(u_symmetry, sym)
 
     // Bind the attribute/buffer set we want.
     gl.bindVertexArray(vao);
@@ -214,6 +231,11 @@ window.onload = () => {
     canvas.addEventListener("mousemove", onMouseMove, true);
     canvas.addEventListener("mousedown", onMouseDown, true);
     document.addEventListener("mouseup", onMouseUp, true);
+
+    const control = document.getElementById("control");
+    control.setAttribute("value", String(sym));
+    control.addEventListener("change", ev =>  sym = +ev.target.value, true);
+
 
 
     window.addEventListener("touchstart", onMouseDown, true)
@@ -224,26 +246,38 @@ window.onload = () => {
 
     const paletteArray = Color.from(
         [
-            "#ff356c",
-            "#b9479e",
-            "#735cd2",
-            "#356cff",
-            "#778abd",
-            "#c0ab74",
-            "#ffc835",
-            "#ff9b46",
-            "#ff6b58",
-            "#ff356c"
+            "#010101",                          
+            "#fff",
+            "#fff",
+            "#0081ff",
+            "#ff0082",
+            "#fff",
+            "#f0f",
+            "#0f0"
         ],
         1
     );
 
 
     gl.uniform3fv(u_palette, paletteArray);
+    gl.uniform1fv(u_shiny, new Float32Array([
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+    ]));
 
-    // gl.activeTexture(gl.TEXTURE0);
-    // gl.bindTexture(gl.TEXTURE_2D, envTexture);
-    // gl.uniform1i(u_env, 0);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, envTexture);
+    gl.uniform1i(u_env, 0);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, envTextureRef);
+    gl.uniform1i(u_env_ref, 1);
 
     requestAnimationFrame(main)
 }
